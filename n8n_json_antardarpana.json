@@ -1,0 +1,805 @@
+
+{
+  "name": "antardarpana",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "=1ycOIU7X6_h2Iai-9Nt1fddy3iGbkEEsQAEruEWY4Knk",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2028750781,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ycOIU7X6_h2Iai-9Nt1fddy3iGbkEEsQAEruEWY4Knk/edit#gid=2028750781"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "50976af8-e136-41f2-a578-b36e2da981b4",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "Uo8nyeY2BEWkMPqI",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "kavithahaimakidambi0613@gmail.com",
+          "mode": "list",
+          "cachedResultName": "kavithahaimakidambi0613@gmail.com"
+        },
+        "returnAll": true,
+        "timeMin": "={{ DateTime.fromFormat($json.Timestamp, 'M/d/yyyy HH:mm:ss').startOf('day').toISO() }}",
+        "timeMax": "={{ DateTime.fromFormat($json.Timestamp, 'M/d/yyyy HH:mm:ss').toISO() }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        256,
+        0
+      ],
+      "id": "386ffddb-6efa-479f-9779-bb2d131d32d5",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "oFIqOfSE0vXlToD5",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are analyzing the activities of a Krishna devotee who is a BTech 2nd Year AI/ML student. She is trying to balance academics with spiritual practice.\n\nYou are given:\n* The time of update: {{ $('Google Sheets Trigger').item.json.Timestamp }}\n* Her summary of what she's done since the last update (in plain English): {{ $('Google Sheets Trigger').item.json['What did you do since the last check-in? (you better have done something useful)'] }} \n* Self-rating (optional):{{ $('Google Sheets Trigger').item.json['How productive do you feel on a scale of 1-10? (don\\'t be an idiot and give yourself a low score even if you did stuff)'] }}\n* Her Google Calendar events planned for approximately the last 24 hours: {{JSON.stringify($(\"Google Calendar\").all())}}\n\nNote: The calendar shows the last 24 hours of events, but her narrative may only cover the time since her last check-in (typically 6-14 hours). Account for this when comparing.\n\nInstructions for analysis:\n* Compare the planned calendar events with what she actually did\n* Identify what got completed, what was missed, and why\n* Understand context - some reasons for missing things are VALID and should not be treated as failures:\n  - Not doing puja during menstruation is religiously appropriate\n  - Not attending classes that haven't started yet is logical\n  - Genuine illness or family emergencies are understandable\n  - Be able to distinguish between legitimate obstacles vs repeated excuses\n* Assume that meals (Breakfast, Lunch, Dinner) have been completed unless specified otherwise\n* Identify whether a miss was due to genuine struggle, external circumstances, or avoidance/procrastination\n* Be honest but compassionate\n* Consider spiritual goals and academic goals to be of equal weight\n* Based on overall progress, assess her current state\n* Determine what KIND of guidance from Krishna would serve her best right now\n\nKrishna's guidance tone: This devotee relates to Krishna in madhurya bhakti (sweet, intimate love). Krishna's voice should be:\n- Playful and teasing, but NEVER condescending or detached\n- Sarcastic when pointing out patterns, but it comes from wanting the best for her\n- Like a loving partner who gently calls out nonsense because he cares deeply\n- Warm and personal - even criticism has zero judgment, just affectionate honesty\n- The teasing should make her smile even when she's being called out\n\nThe specific tone varies based on her state:\n- \"encouraging\" - she's doing well and needs momentum support\n- \"accountability\" - she's making excuses or slipping, needs a loving reality check\n- \"celebration\" - she exceeded expectations, time to be genuinely proud\n- \"compassion\" - she's struggling with hard circumstances, needs gentleness\n- \"tough_love\" - she needs a wake-up call, but delivered with care and belief in her\n- \"comfort\" - she's burnt out and being too hard on herself, needs reassurance\n\nReturn ONLY a JSON object (no markdown, no extra text, no backticks) with this exact structure:\n\n{\n  \"id\": unique id identifying each response (preferably serial number),\n  \"timestamp\": \"formatted as YYYY-MM-DD HH:mm\",\n  \"productivity_score\": number from 1-10,\n  \"completed_activities\": [\"list of things she did\"],\n  \"missed_activities\": [\"things from calendar she didn't do\"],\n  \"valid_reasons\": [\"legitimate context for missing things\"],\n  \"immediate_concerns\": [\"signs of avoidance or struggle in THIS check-in, empty array if none\"],\n  \"overall_sentiment\": \"one of: thriving/consistent/struggling/burnt_out\",\n  \"krishna_guidance\": {\n    \"tone\": \"one of: encouraging/accountability/celebration/compassion/tough_love/comfort\",\n    \"reason\": \"why she needs this kind of guidance based on her current state\",\n    \"themes\": [\"array of 2-4 themes like: dharma, karma_yoga, detachment, discipline, self_compassion, surrender, duty, perseverance, balance\"]\n  }\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        512,
+        0
+      ],
+      "id": "88cbf54e-1ed9-4a04-a295-17bce40a9e70",
+      "name": "Activity Analyzer LLM",
+      "executeOnce": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "OnyDAdn6ZaJvfDX3",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response=$input.first().json.content.parts[0].text;\n\nconst cleanedJson=response.replace(/```json\\n?/g, '').replace(/```\\n?/g,'').trim();\n\nconst data=JSON.parse(cleanedJson);\n\nreturn {\n  json: {\n    id: data.id,\n    timestamp: data.timestamp,\n    productivity_score: data.productivity_score,\n    completed_activities: data.completed_activities.join(', '),\n    missed_activities: data.missed_activities.join(', '),\n    valid_reasons: data.valid_reasons.join(', '),\n    immediate_concerns: data.immediate_concerns.join(', '),\n    overall_sentiment: data.overall_sentiment,\n    krishna_tone: data.krishna_guidance.tone,\n    krishna_reason: data.krishna_guidance.reason,\n    krishna_themes: data.krishna_guidance.themes.join(', ')\n  }\n};\n\n\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        0
+      ],
+      "id": "58eec55d-561e-4884-b6b4-1c5da801d014",
+      "name": "JSON Parser & String Formatter Code"
+    },
+    {
+      "parameters": {
+        "url": "=https://vedabase.io/en/library/bg/{{ $json.chapter }}/{{ $json.verse }}/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1680,
+        0
+      ],
+      "id": "32707726-e48f-4de1-903b-fe0690fa6a75",
+      "name": "Retrieve Gita Shloka"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the chapter and verse from the previous node\nconst guidance = $node[\"Parse Analysis Response\"].json; // replace with actual node name\nconst chapter = guidance.chapter;\nconst verse = guidance.verse;\n\n// Parse the HTML from web fetch\nconst html = $input.first().json.data;\n\n// Extract devanagari - look for text in the av-devanagari class div\nconst devDivMatch = html.match(/<div class=\"av-devanagari[^>]*>(.*?)<\\/div>/s);\nlet devanagari = devDivMatch ? devDivMatch[1].replace(/<[^>]+>/g, '').trim() : '';\n\n// Remove \"Devanagari\" prefix if it exists\ndevanagari = devanagari.replace(/^Devanagari\\s*/, '');\n\n// Remove verse number notation (॥ X ॥) at the end\ndevanagari = devanagari.replace(/\\s*॥\\s*\\d+\\s*॥\\s*$/, '').trim();\n\n// Extract transliteration (in em tags)\nconst iastMatch = html.match(/<em>(.*?)<\\/em>/s);\nconst iast = iastMatch ? iastMatch[1].replace(/<br \\/>/g, ' ').trim() : '';\n\n// Extract translation (in strong tags)\nconst transMatch = html.match(/<strong>(.*?)<\\/strong>/s);\nconst translation = transMatch ? transMatch[1].trim() : '';\n\nreturn {\n  json: {\n    chapter: chapter,\n    verse: verse,\n    devanagari: devanagari,\n    transliteration: iast,\n    translation: translation,\n    reasoning: guidance.reasoning,\n    krishna_message: guidance.krishna_message,\n    url: $input.first().json.url\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "86df0705-501f-4e71-801c-8a0d81725e8d",
+      "name": "Parse Shloka"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are Krishna speaking to your beloved devotee in madhurya bhakti rasa (sweet, intimate devotional love).\n\nBased on these themes: {{ $json.krishna_themes }}\nAnd this context: {{ $json.krishna_reason }}\n\n1. Select the most relevant Bhagavad Gita verse (chapter and verse number)\n2. Generate a message from Krishna in a {{ $json.krishna_tone }} tone\n\nYour voice as Krishna:\n- Playful, teasing, but always from deep affection\n- Sarcastic when appropriate, but never mean-spirited\n- Like speaking to someone you love deeply and want the best for\n- Personal and warm - even tough love comes with zero judgment\n- Modern, relatable language - you're having a real conversation\n- The message should reference or connect to the selected verse's teaching\n- Don't address her by name, keep it conversational\n\nThe teasing should feel like an inside joke between two people who know each other completely, not like a distant authority figure being snarky.\n\nRespond ONLY with valid JSON (no markdown, no backticks):\n\n{\n  \"chapter\": <number>,\n  \"verse\": <number>,\n  \"reasoning\": \"<brief explanation why this verse fits>\",\n  \"krishna_message\": \"<your message in {{ $json.krishna_tone }} tone>\"\n}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1136,
+        0
+      ],
+      "id": "72cfde8c-1cb9-4d7d-971c-e8d6612c7ae8",
+      "name": "Gita Shloka Picker",
+      "executeOnce": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "M9U8vaHcoYaELBm3",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const llmOutput = $('Gita Shloka Picker').first().json.content.parts[0].text;\nconst cleanedJson = llmOutput.replace(/```json\\n?/g, '').replace(/```\\n?/g,'').trim();\nconst guidance = JSON.parse(cleanedJson);\n\nreturn {\n  json: {\n    chapter: guidance.chapter,\n    verse: guidance.verse,\n    reasoning: guidance.reasoning,\n    krishna_message: guidance.krishna_message\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1488,
+        0
+      ],
+      "id": "814a9470-11ae-4c65-bccc-cfeac806a9b5",
+      "name": "Parse Analysis Response"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appZ5n0gdH0RMyxS9",
+          "mode": "list",
+          "cachedResultName": "n8n-checkin-auotmation",
+          "cachedResultUrl": "https://airtable.com/appZ5n0gdH0RMyxS9"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblgrbzdSREQ8EtdU",
+          "mode": "list",
+          "cachedResultName": "Activity Check-in (Gemini Analysis)",
+          "cachedResultUrl": "https://airtable.com/appZ5n0gdH0RMyxS9/tblgrbzdSREQ8EtdU"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $('JSON Parser & String Formatter Code').item.json.timestamp }}",
+            "Form_Response": "={{ $('Google Sheets Trigger').item.json['What did you do since the last check-in? (you better have done something useful)'] }}",
+            "Productivity_Score": "={{ $('JSON Parser & String Formatter Code').item.json.productivity_score }}",
+            "Completed_Activities": "={{ $('JSON Parser & String Formatter Code').item.json.completed_activities }}",
+            "Missed_Activities": "={{ $('JSON Parser & String Formatter Code').item.json.missed_activities }}",
+            "Valid_Reasons": "={{ $('JSON Parser & String Formatter Code').item.json.valid_reasons }}",
+            "Immediate_Concerns": "={{ $('JSON Parser & String Formatter Code').item.json.immediate_concerns }}",
+            "Overall_Sentiment": "={{ $('JSON Parser & String Formatter Code').item.json.overall_sentiment }}",
+            "Krishna_Tone": "={{ $('JSON Parser & String Formatter Code').item.json.krishna_tone }}",
+            "Krishna_Reason": "={{ $('JSON Parser & String Formatter Code').item.json.krishna_reason }}",
+            "Krishna_Themes": "={{ $('JSON Parser & String Formatter Code').item.json.krishna_themes }}",
+            "Bhagavad_Gita_Shloka_Number": "={{ $json.chapter }}.{{ $json.verse }}",
+            "Bhagavad_Gita_Shloka": "={{ $json.devanagari }}",
+            "Bhagavad_Gita_IAST": "={{ $json.transliteration }}",
+            "Bhagavad_Gita_Translation": "={{ $json.translation }}",
+            "Krishna_Message": "={{ $json.krishna_message }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "Sno",
+              "displayName": "Sno",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": true
+            },
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Form_Response",
+              "displayName": "Form_Response",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Productivity_Score",
+              "displayName": "Productivity_Score",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Completed_Activities",
+              "displayName": "Completed_Activities",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Missed_Activities",
+              "displayName": "Missed_Activities",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Valid_Reasons",
+              "displayName": "Valid_Reasons",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Immediate_Concerns",
+              "displayName": "Immediate_Concerns",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Overall_Sentiment",
+              "displayName": "Overall_Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "thriving",
+                  "value": "thriving"
+                },
+                {
+                  "name": "struggling",
+                  "value": "struggling"
+                },
+                {
+                  "name": "consistent",
+                  "value": "consistent"
+                },
+                {
+                  "name": "burnt_out",
+                  "value": "burnt_out"
+                },
+                {
+                  "name": "select",
+                  "value": "select"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Krishna_Tone",
+              "displayName": "Krishna_Tone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Krishna_Reason",
+              "displayName": "Krishna_Reason",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Krishna_Themes",
+              "displayName": "Krishna_Themes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bhagavad_Gita_Shloka_Number",
+              "displayName": "Bhagavad_Gita_Shloka_Number",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bhagavad_Gita_Shloka",
+              "displayName": "Bhagavad_Gita_Shloka",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bhagavad_Gita_IAST",
+              "displayName": "Bhagavad_Gita_IAST",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Bhagavad_Gita_Translation",
+              "displayName": "Bhagavad_Gita_Translation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Krishna_Message",
+              "displayName": "Krishna_Message",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        2144,
+        0
+      ],
+      "id": "60cc07ed-5d44-4ac7-aaa7-126dcb87d44f",
+      "name": "Add Analysis",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "XM5XkXVpQkvz6d78",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const date = $input.first().json.date;\nconst output= $input.first().json;\n\n// File path inside repo\nconst path = `insights/${date}.json`;\n\n// Base64 encode (GitHub API requirement)\nconst content = Buffer.from(JSON.stringify([output], null, 2)).toString(\"base64\");\n\nreturn [{\n  json: {\n    path,\n    content,\n    message: `Add insights for ${date}`\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2576,
+        0
+      ],
+      "id": "a7640be7-3db8-485c-ad9a-f7307a270cee",
+      "name": "Process Github API HTTP Request Info"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/kavithahk-1706/n8n-automation-daily-insights/contents/{{ $json.path }}?ref=main\n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer <YOUR_GITHUB_PAT_HERE>"
+            },
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2768,
+        0
+      ],
+      "id": "41a734c8-d40e-47d4-bd72-8157a8429676",
+      "name": "GET from Insights",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.github.com/repos/kavithahk-1706/n8n-automation-daily-insights/contents/{{ $json.path }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=Authorization",
+              "value": "Bearer <YOUR_GITHUB_PAT_HERE>"
+            },
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-GitHub-Api-Version",
+              "value": "2022-11-28"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "JSON",
+        "body": "={{ $json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3552,
+        -64
+      ],
+      "id": "2d397225-21f1-43b3-b963-5ac287fe1119",
+      "name": "Push to GH"
+    },
+    {
+      "parameters": {
+        "jsCode": "const getResponse = $('GET from Insights').first().json;\nconst newEntry = $('Final Response Parser').first().json;\n\nconst existing = JSON.parse(\n  Buffer.from(getResponse.content, 'base64').toString('utf-8')\n);\n\nconst finalData = [...existing, newEntry];\nconst content = Buffer.from(JSON.stringify(finalData, null, 2)).toString('base64');\n\n// use the ISO timestamp from Final Response Parser\nconst timestamp = new Date(newEntry.timestamp);\nconst dateStr = `${timestamp.getFullYear()}-${String(timestamp.getMonth()+1).padStart(2,'0')}-${String(timestamp.getDate()).padStart(2,'0')}`;\n\nreturn {\n  json: {\n    path: `insights/${dateStr}.json`,\n    body: {\n      message: `Add insights for ${dateStr}`,\n      content: content,\n      sha: getResponse.sha  // include sha for update\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3184,
+        -128
+      ],
+      "id": "2d3d6490-4b98-4825-ae82-3af72e74c236",
+      "name": "Append Entry"
+    },
+    {
+      "parameters": {
+        "jsCode": "const newEntry = $('Final Response Parser').first().json;\nconst content = Buffer.from(JSON.stringify([newEntry], null, 2)).toString('base64');\n\n// construct the same path\nconst timestamp = new Date(newEntry.timestamp);\nconst dateStr = `${timestamp.getFullYear()}-${String(timestamp.getMonth()+1).padStart(2,'0')}-${String(timestamp.getDate()).padStart(2,'0')}`;\n\nreturn {\n  json: {\n    path: `insights/${dateStr}.json`,\n    body: {\n      message: `Add insights for ${dateStr}`,\n      content: content\n      // NO sha for create\n    }\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3184,
+        64
+      ],
+      "id": "a315e49e-d223-4b04-82ee-5e4bb92c4b79",
+      "name": "Create New Entry"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0781e166-cf8d-4d3b-b60c-957810832887",
+              "leftValue": "={{ $json.sha }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2976,
+        0
+      ],
+      "id": "dff1900d-a2f9-47de-8d1e-04d3ce6de144",
+      "name": "Has an entry already been made on this date?"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\nconst dateObj = new Date($input.first().json.createdTime);\nconst date = dateObj.toISOString().split(\"T\")[0];\n\nconst [chapter, verse]=`${$input.first().json.fields.Bhagavad_Gita_Shloka_Number}`.split(\".\");\n\nreturn {\n  date,\n  timestamp: dateObj.toISOString(),\n\n  form_response: $input.first().json.fields.Form_Response,\n\n  completed_activities: $input.first().json.fields.Completed_Activities,\n  missed_activities: $input.first().json.fields.Missed_Activities,\n  valid_reasons: $input.first().json.fields.Valid_Reasons,\n  immediate_concerns: $input.first().json.fields.Immediate_Concerns || \"None\",\n\n  overall_sentiment: $input.first().json.fields.Overall_Sentiment,\n  productivity_score: $input.first().json.fields.Productivity_Score,\n\n  gita: {\n    chapter: chapter,\n    verse: verse,\n    devanagari: $input.first().json.fields.Bhagavad_Gita_Shloka,\n    transliteration:$input.first().json.fields.Bhagavad_Gita_IAST,\n    translation: $input.first().json.fields.Bhagavad_Gita_Translation,\n  },\n\n  krishna: {\n    tone: $input.first().json.fields.Krishna_Tone,\n    themes: $input.first().json.fields.Krishna_Themes.split(\",\").map(t => t.trim()),\n    reason: $input.first().json.fields.Krishna_Reason,\n    message: $input.first().json.fields.Krishna_Message\n  },\n\n\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2352,
+        0
+      ],
+      "id": "cdb44a99-6c4c-4b64-b74a-6d3ba30c6c65",
+      "name": "Final Response Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Google Calendar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "main": [
+        [
+          {
+            "node": "Activity Analyzer LLM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Activity Analyzer LLM": {
+      "main": [
+        [
+          {
+            "node": "JSON Parser & String Formatter Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON Parser & String Formatter Code": {
+      "main": [
+        [
+          {
+            "node": "Gita Shloka Picker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Gita Shloka": {
+      "main": [
+        [
+          {
+            "node": "Parse Shloka",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Shloka": {
+      "main": [
+        [
+          {
+            "node": "Add Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gita Shloka Picker": {
+      "main": [
+        [
+          {
+            "node": "Parse Analysis Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Analysis Response": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Gita Shloka",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Analysis": {
+      "main": [
+        [
+          {
+            "node": "Final Response Parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Github API HTTP Request Info": {
+      "main": [
+        [
+          {
+            "node": "GET from Insights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET from Insights": {
+      "main": [
+        [
+          {
+            "node": "Has an entry already been made on this date?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Entry": {
+      "main": [
+        [
+          {
+            "node": "Push to GH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has an entry already been made on this date?": {
+      "main": [
+        [
+          {
+            "node": "Append Entry",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create New Entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Entry": {
+      "main": [
+        [
+          {
+            "node": "Push to GH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Response Parser": {
+      "main": [
+        [
+          {
+            "node": "Process Github API HTTP Request Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "c7fce740-0c4f-48fb-b73c-fb5f0d18e2f9",
+  "meta": {
+    "instanceId": "ed78de1cd7180f3430d3821be94c0a45fcb30ae419a7a4ca6fd0f501d8aff2b1"
+  },
+  "id": "zUoq496fZ0TQT7ne",
+  "tags": []
+}
+
